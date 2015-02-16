@@ -46,6 +46,29 @@ function divide = |a, b| {
   }
 }
 
+function withGoloType = |decoratorArgs...| {
+  return |func| { # return decorated function
+    return |functionArgs...| {
+      let ret = T(null, null)
+      try {
+        ret: value(func: invokeWithArguments(functionArgs))
+      } catch (e) {
+        ret: error(e)
+      } finally {
+        return ret
+      }
+    }
+  }
+}
+
+# implémentation de la méthode divide
+# décoration de la méthode divide
+
+@withGoloType()
+function divideNew = |a, b| {
+  return a/b
+}
+
 function main = |args| {
     let a = T()
     a: value(5): error(null)
@@ -80,4 +103,11 @@ function main = |args| {
     }) # h == 42
 
     println(h)
+
+    let i = divide(5,0): getOrElse("n/a", |instanceOfT| {
+      println(instanceOfT: error())
+      return 42
+    })
+
+    println(i)
 }
